@@ -34,6 +34,12 @@ if (!string.IsNullOrEmpty(fileContents))
             case ')':
                 System.Console.WriteLine("RIGHT_PAREN ) null");
                 break;
+            case '{':
+                System.Console.WriteLine("LEFT_BRACE { null");
+                break;
+            case '}':
+                System.Console.WriteLine("RIGHT_BRACE } null");
+                break;
         }
     }
 
