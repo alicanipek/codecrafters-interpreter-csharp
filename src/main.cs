@@ -116,6 +116,9 @@ if (!string.IsNullOrEmpty(fileContents)) {
                     System.Console.WriteLine(tk);
                 }
                 break;
+            case '\t':
+            case ' ': // Ignore whitespace
+                break;
             default:
                 errors.Add($"[line {line}] Error: Unexpected character: {c}");
                 break;
