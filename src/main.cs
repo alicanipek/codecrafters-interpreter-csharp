@@ -117,8 +117,9 @@ if (!string.IsNullOrEmpty(fileContents)) {
                 break;
             case '/':
                 if (i + 1 < fileContents.Count() && fileContents[i + 1] == '/') {
-                    // Skip the comment
-                    while (i < fileContents.Count() && fileContents[i] != '\n' && !(i + 1 < fileContents.Length && new char[]{ fileContents[i], fileContents[i + 1]}.ToString() == "\r\n")) {
+                    i += 2; // Skip the initial "//"
+                    while (i < fileContents.Length && fileContents[i] != '\n' && 
+                        !(fileContents[i] == '\r' && i + 1 < fileContents.Length && fileContents[i + 1] == '\n')) {
                         i++;
                     }
                     i--;
@@ -127,6 +128,23 @@ if (!string.IsNullOrEmpty(fileContents)) {
                     tk = new("SLASH", "/", null, line);
                     System.Console.WriteLine(tk);
                 }
+                break;
+            case '\"':
+                int start = i;
+                i++;
+                while (i < fileContents.Length && fileContents[i] != '"') {
+                    if (fileContents[i] == '\n') {
+                        line++;
+                    }
+                    i++;
+                }
+                if (i >= fileContents.Length) {
+                    errors.Add($"[line {line}] Error: Unterminated string.");
+                    break;
+                }
+                string value = fileContents.Substring(start + 1, i - start - 1);
+                tk = new("STRING", $"\"{value}\"", value, line);
+                System.Console.WriteLine(tk);
                 break;
             case '\t':
             case ' ': // Ignore whitespace
