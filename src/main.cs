@@ -87,6 +87,24 @@ if (!string.IsNullOrEmpty(fileContents)) {
                 }
                 System.Console.WriteLine(tk);
                 break;
+            case '<':
+                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '='){
+                    i++;
+                    tk = new("LESS_EQUAL", "<=", null, line);
+                }else{
+                    tk = new("LESS", "<", null, line);
+                }
+                System.Console.WriteLine(tk);
+                break;
+            case '>':
+                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '='){
+                    i++;
+                    tk = new("GREATER_EQUAL", ">=", null, line);
+                }else{
+                    tk = new("GREATER", ">", null, line);
+                }
+                System.Console.WriteLine(tk);
+                break;
             default:
                 errors.Add($"[line {line}] Error: Unexpected character: {c}");
                 break;
