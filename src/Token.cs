@@ -1,4 +1,4 @@
-class Token(string TokenType, string Lexeme, object? Literal)
+class Token(string TokenType, string Lexeme, object? Literal, int Line)
 {
 	public override string ToString()
 	{

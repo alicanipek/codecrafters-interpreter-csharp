@@ -23,58 +23,74 @@ Console.Error.WriteLine("Logs from your program will appear here!");
 // Uncomment this block to pass the first stage
 if (!string.IsNullOrEmpty(fileContents))
 {
+    var errors = new List<string>();
     foreach (var c in fileContents)
     {
         Token tk;
+        int line = 1;
         switch (c)
         {
+            case '\n':
+                line++;
+                break;
             case '(':
-                tk = new("LEFT_PAREN", "(", null);
+                tk = new("LEFT_PAREN", "(", null, line);
                 System.Console.WriteLine(tk);
 
                 break;
 
             case ')':
-                tk = new("RIGHT_PAREN", ")", null);
+                tk = new("RIGHT_PAREN", ")", null, line);
                 System.Console.WriteLine(tk);
 
                 break;
             case '{':
-                tk = new("LEFT_BRACE", "{", null);
+                tk = new("LEFT_BRACE", "{", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case '}':
-                tk = new("RIGHT_BRACE", "}", null);
+                tk = new("RIGHT_BRACE", "}", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case ',':
-                tk = new("COMMA", ",", null);
+                tk = new("COMMA", ",", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case '.':
-                tk = new("DOT", ".", null);
+                tk = new("DOT", ".", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case '-':
-                tk = new("MINUS", "-", null);
+                tk = new("MINUS", "-", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case '+':
-                tk = new("PLUS", "+", null);
+                tk = new("PLUS", "+", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case ';':
-                tk = new("SEMICOLON", ";", null);
+                tk = new("SEMICOLON", ";", null, line);
                 System.Console.WriteLine(tk);
                 break;
             case '*':
-                tk = new("STAR", "*", null);
+                tk = new("STAR", "*", null, line);
                 System.Console.WriteLine(tk);
+                break;
+            default:
+                errors.Add($"[line {line}] Error: Unexpected character: {c}");
                 break;
         }
     }
 
     Console.WriteLine("EOF  null");
+    if (errors.Count > 0)
+    {
+        foreach (var error in errors)
+        {
+            Console.Error.WriteLine(error);
+        }
+        Environment.Exit(65);
+    }
 }
 else
 {
