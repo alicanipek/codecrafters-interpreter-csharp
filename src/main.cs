@@ -25,20 +25,51 @@ if (!string.IsNullOrEmpty(fileContents))
 {
     foreach (var c in fileContents)
     {
+        Token tk;
         switch (c)
         {
             case '(':
-                System.Console.WriteLine("LEFT_PAREN ( null");
+                tk = new("LEFT_PAREN", "(", null);
+                System.Console.WriteLine(tk);
+
                 break;
 
             case ')':
-                System.Console.WriteLine("RIGHT_PAREN ) null");
+                tk = new("RIGHT_PAREN", ")", null);
+                System.Console.WriteLine(tk);
+
                 break;
             case '{':
-                System.Console.WriteLine("LEFT_BRACE { null");
+                tk = new("LEFT_BRACE", "{", null);
+                System.Console.WriteLine(tk);
                 break;
             case '}':
-                System.Console.WriteLine("RIGHT_BRACE } null");
+                tk = new("RIGHT_BRACE", "}", null);
+                System.Console.WriteLine(tk);
+                break;
+            case ',':
+                tk = new("COMMA", ",", null);
+                System.Console.WriteLine(tk);
+                break;
+            case '.':
+                tk = new("DOT", ".", null);
+                System.Console.WriteLine(tk);
+                break;
+            case '-':
+                tk = new("MINUS", "-", null);
+                System.Console.WriteLine(tk);
+                break;
+            case '+':
+                tk = new("PLUS", "+", null);
+                System.Console.WriteLine(tk);
+                break;
+            case ';':
+                tk = new("SEMICOLON", ";", null);
+                System.Console.WriteLine(tk);
+                break;
+            case '*':
+                tk = new("STAR", "*", null);
+                System.Console.WriteLine(tk);
                 break;
         }
     }
