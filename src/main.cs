@@ -17,7 +17,7 @@ if (command != "tokenize") {
 string fileContents = File.ReadAllText(filename);
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.Error.WriteLine("Logs from your program will appear here!");
-
+List<string> reserved = new() { "and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while" };
 // Uncomment this block to pass the first stage
 if (!string.IsNullOrEmpty(fileContents)) {
     var errors = new List<string>();
@@ -163,7 +163,12 @@ if (!string.IsNullOrEmpty(fileContents)) {
                     i++;
                 }
                 value = fileContents.Substring(start, i - start);
-                tk = new("IDENTIFIER", value, null, line);
+                if(reserved.Contains(value)){
+                    tk = new(value.ToUpper(), value, null, line);
+                }
+                else{
+                    tk = new("IDENTIFIER", value, null, line);
+                }
                 System.Console.WriteLine(tk);
                 i--;
                 break;
