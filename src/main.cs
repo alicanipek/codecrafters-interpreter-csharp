@@ -105,6 +105,17 @@ if (!string.IsNullOrEmpty(fileContents)) {
                 }
                 System.Console.WriteLine(tk);
                 break;
+            case '/':
+                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '/'){
+                    i++;
+                    while(i < fileContents.Count() && fileContents[i] != '\n'){
+                        i++;
+                    }
+                }else{
+                    tk = new("SLASH", "/", null, line);
+                    System.Console.WriteLine(tk);
+                }
+                break;
             default:
                 errors.Add($"[line {line}] Error: Unexpected character: {c}");
                 break;
