@@ -21,13 +21,19 @@ Console.Error.WriteLine("Logs from your program will appear here!");
 // Uncomment this block to pass the first stage
 if (!string.IsNullOrEmpty(fileContents)) {
     var errors = new List<string>();
+    int line = 1;
     for (int i = 0; i < fileContents.Length; i++) {
         char c = fileContents[i];
         Token tk;
-        int line = 1;
         switch (c) {
             case '\n':
                 line++;
+                break;
+            case '\r':
+                if (i + 1 < fileContents.Count() && fileContents[i + 1] == '\n') {
+                    i++;
+                    line++;
+                }
                 break;
             case '(':
                 tk = new("LEFT_PAREN", "(", null, line);
@@ -70,48 +76,54 @@ if (!string.IsNullOrEmpty(fileContents)) {
                 System.Console.WriteLine(tk);
                 break;
             case '=':
-                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '='){
+                if (i + 1 < fileContents.Count() && fileContents[i + 1] == '=') {
                     i++;
                     tk = new("EQUAL_EQUAL", "==", null, line);
-                }else{
+                }
+                else {
                     tk = new("EQUAL", "=", null, line);
                 }
                 System.Console.WriteLine(tk);
                 break;
             case '!':
-                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '='){
+                if (i + 1 < fileContents.Count() && fileContents[i + 1] == '=') {
                     i++;
                     tk = new("BANG_EQUAL", "!=", null, line);
-                }else{
+                }
+                else {
                     tk = new("BANG", "!", null, line);
                 }
                 System.Console.WriteLine(tk);
                 break;
             case '<':
-                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '='){
+                if (i + 1 < fileContents.Count() && fileContents[i + 1] == '=') {
                     i++;
                     tk = new("LESS_EQUAL", "<=", null, line);
-                }else{
+                }
+                else {
                     tk = new("LESS", "<", null, line);
                 }
                 System.Console.WriteLine(tk);
                 break;
             case '>':
-                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '='){
+                if (i + 1 < fileContents.Count() && fileContents[i + 1] == '=') {
                     i++;
                     tk = new("GREATER_EQUAL", ">=", null, line);
-                }else{
+                }
+                else {
                     tk = new("GREATER", ">", null, line);
                 }
                 System.Console.WriteLine(tk);
                 break;
             case '/':
-                if(i+1 < fileContents.Count() &&  fileContents[i+1] == '/'){
-                    i++;
-                    while(i < fileContents.Count() && fileContents[i] != '\n'){
+                if (i + 1 < fileContents.Count() && fileContents[i + 1] == '/') {
+                    // Skip the comment
+                    while (i < fileContents.Count() && fileContents[i] != '\n' && !(i + 1 < fileContents.Length && new char[]{ fileContents[i], fileContents[i + 1]}.ToString() == "\r\n")) {
                         i++;
                     }
-                }else{
+                    i--;
+                }
+                else {
                     tk = new("SLASH", "/", null, line);
                     System.Console.WriteLine(tk);
                 }
