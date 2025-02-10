@@ -146,22 +146,24 @@ if (!string.IsNullOrEmpty(fileContents)) {
                 tk = new("STRING", $"\"{value}\"", value, line);
                 System.Console.WriteLine(tk);
                 break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
+            case char digit when char.IsDigit(digit):
                 start = i;
                 while (i < fileContents.Length && (char.IsDigit(fileContents[i]) || fileContents[i] == '.')) {
                     i++;
                 }
                 value = fileContents.Substring(start, i - start);
                 tk = new("NUMBER", value, double.Parse(value), line);
+                System.Console.WriteLine(tk);
+                i--;
+                break;
+            case '_':
+            case char letter when char.IsLetter(letter):
+                start = i;
+                while (i < fileContents.Length && (char.IsLetterOrDigit(fileContents[i]) || fileContents[i] == '_')) {
+                    i++;
+                }
+                value = fileContents.Substring(start, i - start);
+                tk = new("IDENTIFIER", value, null, line);
                 System.Console.WriteLine(tk);
                 i--;
                 break;
