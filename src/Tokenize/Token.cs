@@ -1,17 +1,21 @@
-public class Token(string TokenType, string Lexeme, object? Literal, int Line)
-{
-    public string TokenType { get; } = TokenType;
-    public string Lexeme { get; } = Lexeme;
-    public object? Literal { get; } = Literal;
-    public int Line { get; } = Line;
+using System.Globalization;
 
-    public override string ToString()
-	{
-		string literalStr = Literal switch
-		{
-			double d => d % 1 == 0 ? $"{d:0.0}" : d.ToString(), // Show .0 for whole numbers, keep decimals untouched
-			_ => Literal?.ToString() ?? "null" // Fallback for other types
+public class Token(string TokenType, string Lexeme, object? Literal, int Line) {
+	public string TokenType { get; } = TokenType;
+	public string Lexeme { get; } = Lexeme;
+	public object? Literal { get; } = Literal;
+	public int Line { get; } = Line;
+
+	public override string ToString() {
+		return TokenType + " " + Lexeme + " " + GetLiteralString();
+	}
+
+	private string GetLiteralString() {
+		return Literal switch {
+			null => "null",
+			string s => s,
+			double d => d % 1 == 0 ? d.ToString("F1") : d.ToString(CultureInfo.InvariantCulture),
+			_ => throw new Exception("Unknown literal type")
 		};
-		return TokenType + " " + Lexeme + " " + literalStr;
 	}
 }

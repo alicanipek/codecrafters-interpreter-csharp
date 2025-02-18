@@ -1,3 +1,5 @@
+using System.Globalization;
+
 public class Tokenizer(string content) {
 	public List<Token> tokens = new();
 	public List<string> errors = new List<string>();
@@ -136,7 +138,7 @@ public class Tokenizer(string content) {
 					while (i < content.Length && (char.IsDigit(content[i]) || content[i] == '.')) {
 						i++;
 					}
-					value = content.Substring(start, i - start);
+					value = content[start..i];
 					tk = new("NUMBER", value, double.Parse(value), line);
 					tokens.Add(tk);
 					i--;
