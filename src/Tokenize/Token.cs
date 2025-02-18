@@ -14,7 +14,7 @@ public class Token(string TokenType, string Lexeme, object? Literal, int Line) {
 		return Literal switch {
 			null => "null",
 			string s => s,
-			double d => d % 1 == 0 ? d.ToString("F1") : d.ToString(CultureInfo.InvariantCulture),
+			double d => d % 1 == 0 ? $"{d:0.0}" : d.ToString(),
 			_ => throw new Exception("Unknown literal type")
 		};
 	}
