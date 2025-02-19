@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/net9.0/codecrafters-interpreter.dll",
-            "args": ["tokenize", "test.lox"],
+            "args": ["parse", "test.lox"],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false

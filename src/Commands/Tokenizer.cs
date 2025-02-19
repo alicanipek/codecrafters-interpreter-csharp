@@ -139,7 +139,10 @@ public class Tokenizer(string content) {
 						i++;
 					}
 					value = content[start..i];
-					tk = new("NUMBER", value, double.Parse(value), line);
+					var v = double.Parse(value, CultureInfo.InvariantCulture);
+					var literal = v.ToString().Contains(".") ? v.ToString() : $"{v}.0";
+
+					tk = new("NUMBER", value, literal, line);
 					tokens.Add(tk);
 					i--;
 					break;
