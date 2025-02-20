@@ -1,13 +1,20 @@
 public class RecursiveParser {
 	private readonly List<Token> tokens;
 	private int current = 0;
+	public bool hadError = false;
 
 	public RecursiveParser(List<Token> tokens) {
 		this.tokens = tokens;
 	}
 
 	public object Parse() {
-		return Expression();
+		try {
+			return Expression();
+		}
+		catch (ParseError) {
+			Synchronize(); // Recover from the error
+			return null; // Return null in case of error
+		}
 	}
 
 	private object Expression() {
@@ -85,7 +92,7 @@ public class RecursiveParser {
 			return new Grouping(expr);
 		}
 
-		throw new Exception("Unexpected token.");
+		throw Error(Peek(), "Expect expression.");
 	}
 
 	private bool Match(params TokenType[] types) {
@@ -123,8 +130,50 @@ public class RecursiveParser {
 
 	private Token Consume(TokenType type, string message) {
 		if (Check(type)) return Advance();
-		throw new Exception(message);
+		throw Error(Peek(), message);
 	}
+
+	private ParseError Error(Token token, string message) {
+		if(token.TokenType == TokenType.EOF) {
+			ReportError(token.Line, " at end", message);
+		} else {
+			ReportError(token.Line, $" at '{token.Lexeme}'", message);
+		}
+		return new ParseError(message);
+	}
+
+	private void ReportError(int line, string at, string message) {
+
+		Console.Error.WriteLine($"[line {line}] Error{at}: {message}");
+		hadError = true;
+
+	}
+
+	private void Synchronize() {
+		if (!IsAtEnd()) Advance();
+
+		while (!IsAtEnd()) {
+			if (Previous().TokenType == TokenType.SEMICOLON) return;
+
+			switch (Peek().TokenType) {
+				case TokenType.CLASS:
+				case TokenType.FUN:
+				case TokenType.VAR:
+				case TokenType.FOR:
+				case TokenType.IF:
+				case TokenType.WHILE:
+				case TokenType.PRINT:
+				case TokenType.RETURN:
+					return;
+			}
+
+			Advance();
+		}
+	}
+}
+
+public class ParseError : Exception {
+	public ParseError(string message) : base(message) { }
 }
 
 public class Binary {

@@ -36,6 +36,9 @@ if (!string.IsNullOrEmpty(fileContents)) {
 
                 RecursiveParser parser = new(tokenizer.tokens);
                 object result = parser.Parse();
+                if(parser.hadError) {
+                    Environment.Exit(65);
+                }
                 System.Console.WriteLine(result);
 
                 break;

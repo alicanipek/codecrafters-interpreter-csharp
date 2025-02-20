@@ -5,9 +5,9 @@ public class Tokenizer(string content) {
 	public List<string> errors = new List<string>();
 	public int errorCode = 0;
 	List<string> reserved = new() { "and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while" };
+	int line = 1;
 	public void Tokenize() {
 		// Uncomment this block to pass the first stage
-		int line = 1;
 		for (int i = 0; i < content.Length; i++) {
 			char c = content[i];
 			Token tk;
@@ -54,40 +54,40 @@ public class Tokenizer(string content) {
 				case '=':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new(TokenType.EQUAL_EQUAL, "==", null);
+						tk = new(TokenType.EQUAL_EQUAL, "==", null, line);
 					}
 					else {
-						tk = new(TokenType.EQUAL, "=", null);
+						tk = new(TokenType.EQUAL, "=", null, line);
 					}
 					tokens.Add(tk);
 					break;
 				case '!':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new(TokenType.BANG_EQUAL, "!=", null);
+						tk = new(TokenType.BANG_EQUAL, "!=", null, line);
 					}
 					else {
-						tk = new(TokenType.BANG, "!", null);
+						tk = new(TokenType.BANG, "!", null, line);
 					}
 					tokens.Add(tk);
 					break;
 				case '<':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new(TokenType.LESS_EQUAL, "<=", null);
+						tk = new(TokenType.LESS_EQUAL, "<=", null, line);
 					}
 					else {
-						tk = new(TokenType.LESS, "<", null);
+						tk = new(TokenType.LESS, "<", null, line);
 					}
 					tokens.Add(tk);
 					break;
 				case '>':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new(TokenType.GREATER_EQUAL, ">=", null);
+						tk = new(TokenType.GREATER_EQUAL, ">=", null, line);
 					}
 					else {
-						tk = new(TokenType.GREATER, ">", null);
+						tk = new(TokenType.GREATER, ">", null, line);
 					}
 					tokens.Add(tk);
 					break;
@@ -140,10 +140,10 @@ public class Tokenizer(string content) {
 					}
 					value = content.Substring(start, i - start);
 					if (reserved.Contains(value)) {
-						tk = new(Enum.Parse<TokenType>(value.ToUpper()), value, null);
+						tk = new(Enum.Parse<TokenType>(value.ToUpper()), value, null, line);
 					}
 					else {
-						tk = new(TokenType.IDENTIFIER, value, null);
+						tk = new(TokenType.IDENTIFIER, value, null, line);
 					}
 					tokens.Add(tk);
 					i--;
@@ -157,7 +157,7 @@ public class Tokenizer(string content) {
 					break;
 			}
 		}
-		tokens.Add(new(TokenType.EOF, "", null));
+		AddToken(TokenType.EOF, "");
 	}
 
 	private void AddToken(TokenType type, string lexeme) {
@@ -165,6 +165,6 @@ public class Tokenizer(string content) {
 	}
 
 	private void AddToken(TokenType type, string lexeme, Object literal) {
-		tokens.Add(new Token(type, lexeme, literal));
+		tokens.Add(new Token(type, lexeme, literal, line));
 	}
 }
