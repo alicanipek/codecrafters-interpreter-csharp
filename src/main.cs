@@ -43,6 +43,21 @@ if (!string.IsNullOrEmpty(fileContents)) {
 
                 break;
             }
+        case "evaluate": {
+                Tokenizer tokenizer = new(fileContents);
+                tokenizer.Tokenize();
+
+                RecursiveParser parser = new(tokenizer.tokens);
+                Expr result = parser.Parse();
+                if(parser.hadError) {
+                    Environment.Exit(65);
+                }
+
+                Evaluator evaluator = new();
+                var value = evaluator.Evaluate(result);
+                System.Console.WriteLine(value);
+                break;
+            }
         default:
             Console.Error.WriteLine("Invalid command.");
             Environment.Exit(1);

@@ -7,7 +7,7 @@ public class RecursiveParser {
 		this.tokens = tokens;
 	}
 
-	public object Parse() {
+	public Expr Parse() {
 		try {
 			return Expression();
 		}
@@ -17,79 +17,79 @@ public class RecursiveParser {
 		}
 	}
 
-	private object Expression() {
+	private Expr Expression() {
 		return Equality();
 	}
 
-	private object Equality() {
-		object expr = Comparison();
+	private Expr Equality() {
+		Expr expr = Comparison();
 
 		while (Match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
 			Token op = Previous();
-			object right = Comparison();
-			expr = new Binary(expr, op, right);
+			Expr right = Comparison();
+			expr = new BinaryExpr(expr, op, right);
 		}
 
 		return expr;
 	}
 
-	private object Comparison() {
-		object expr = Term();
+	private Expr Comparison() {
+		Expr expr = Term();
 
 		while (Match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
 			Token op = Previous();
-			object right = Term();
-			expr = new Binary(expr, op, right);
+			Expr right = Term();
+			expr = new BinaryExpr(expr, op, right);
 		}
 
 		return expr;
 	}
 
-	private object Term() {
-		object expr = Factor();
+	private Expr Term() {
+		Expr expr = Factor();
 
 		while (Match(TokenType.MINUS, TokenType.PLUS)) {
 			Token op = Previous();
-			object right = Factor();
-			expr = new Binary(expr, op, right);
+			Expr right = Factor();
+			expr = new BinaryExpr(expr, op, right);
 		}
 
 		return expr;
 	}
 
-	private object Factor() {
-		object expr = Unary();
+	private Expr Factor() {
+		Expr expr = Unary();
 
 		while (Match(TokenType.SLASH, TokenType.STAR)) {
 			Token op = Previous();
-			object right = Unary();
-			expr = new Binary(expr, op, right);
+			Expr right = Unary();
+			expr = new BinaryExpr(expr, op, right);
 		}
 
 		return expr;
 	}
 
-	private object Unary() {
+	private Expr Unary() {
 		if (Match(TokenType.BANG, TokenType.MINUS)) {
 			Token op = Previous();
-			object right = Unary();
-			return new Unary(op, right);
+			Expr right = Unary();
+			return new UnaryExpr(op, right);
 		}
 
 		return Primary();
 	}
 
-	private object Primary() {
+	private Expr Primary() {
 		if (Match(TokenType.NUMBER, TokenType.STRING, TokenType.TRUE, TokenType.FALSE, TokenType.NIL)) {
 			var v = Previous();
 			string value = v.TokenType == TokenType.NUMBER || v.TokenType == TokenType.STRING ? v.Literal.ToString() : v.Lexeme;
-			return value;
+			return new LiteralExpr(value);
 		}
 
 		if (Match(TokenType.LEFT_PAREN)) {
-			object expr = Expression();
+			Expr expr = Expression();
 			Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-			return new Grouping(expr);
+			return new GroupingExpr(expr);
 		}
 
 		throw Error(Peek(), "Expect expression.");
@@ -134,9 +134,10 @@ public class RecursiveParser {
 	}
 
 	private ParseError Error(Token token, string message) {
-		if(token.TokenType == TokenType.EOF) {
+		if (token.TokenType == TokenType.EOF) {
 			ReportError(token.Line, " at end", message);
-		} else {
+		}
+		else {
 			ReportError(token.Line, $" at '{token.Lexeme}'", message);
 		}
 		return new ParseError(message);
@@ -176,44 +177,44 @@ public class ParseError : Exception {
 	public ParseError(string message) : base(message) { }
 }
 
-public class Binary {
-	public object Left { get; }
-	public Token Operator { get; }
-	public object Right { get; }
+// public class Binary {
+// 	public object Left { get; }
+// 	public Token Operator { get; }
+// 	public object Right { get; }
 
-	public Binary(object left, Token op, object right) {
-		Left = left;
-		Operator = op;
-		Right = right;
-	}
-	public override string ToString() {
-		return $"({Operator.Lexeme} {Left} {Right})";
-	}
-}
+// 	public Binary(object left, Token op, object right) {
+// 		Left = left;
+// 		Operator = op;
+// 		Right = right;
+// 	}
+// 	public override string ToString() {
+// 		return $"({Operator.Lexeme} {Left} {Right})";
+// 	}
+// }
 
-public class Unary {
-	public Token Operator { get; }
-	public object Right { get; }
+// public class Unary {
+// 	public Token Operator { get; }
+// 	public object Right { get; }
 
-	public Unary(Token op, object right) {
-		Operator = op;
-		Right = right;
-	}
+// 	public Unary(Token op, object right) {
+// 		Operator = op;
+// 		Right = right;
+// 	}
 
-	public override string ToString() {
-		return $"({Operator.Lexeme} {Right})";
-	}
-}
+// 	public override string ToString() {
+// 		return $"({Operator.Lexeme} {Right})";
+// 	}
+// }
 
-public class Grouping {
-	public object Expression { get; }
+// public class Grouping {
+// 	public object Expression { get; }
 
-	public Grouping(object expression) {
-		Expression = expression;
-	}
+// 	public Grouping(object expression) {
+// 		Expression = expression;
+// 	}
 
 
-	public override string ToString() {
-		return $"(group {Expression})";
-	}
-}
+// 	public override string ToString() {
+// 		return $"(group {Expression})";
+// 	}
+// }
