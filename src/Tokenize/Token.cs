@@ -1,12 +1,11 @@
 using System.Globalization;
 
-public class Token(string TokenType, string Lexeme, Object? Literal, int Line) {
-	public string TokenType { get; } = TokenType;
-	public string Lexeme { get; } = Lexeme;
-	public Object? Literal { get; } = Literal;
-	public int Line { get; } = Line;
+public class Token(TokenType TokenType, string Lexeme, Object? Literal) {
+    public TokenType TokenType { get; } = TokenType;
+    public string Lexeme { get; } = Lexeme;
+    public object? Literal { get; } = Literal;
 
-	public override string ToString() {
+    public override string ToString() {
 		return TokenType + " " + Lexeme + " " + GetLiteralString();
 	}
 

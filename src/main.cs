@@ -34,8 +34,9 @@ if (!string.IsNullOrEmpty(fileContents)) {
                 Tokenizer tokenizer = new(fileContents);
                 tokenizer.Tokenize();
 
-                Parser parser = new(tokenizer.tokens);
-                parser.Parse();
+                RecursiveParser parser = new(tokenizer.tokens);
+                object result = parser.Parse();
+                System.Console.WriteLine(result);
 
                 break;
             }

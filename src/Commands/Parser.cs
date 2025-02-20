@@ -3,7 +3,7 @@ using System.Text;
 public class Parser(List<Token> tokens) {
 	private int current;
 
-	private bool Check(string type) {
+	private bool Check(TokenType type) {
 		if (IsAtEnd()) {
 			return false;
 		}
@@ -11,7 +11,7 @@ public class Parser(List<Token> tokens) {
 	}
 
 	private bool IsAtEnd() {
-		return Peek().TokenType == "EOF";
+		return Peek().TokenType == TokenType.EOF;
 	}
 
 	private Token Peek() {
@@ -29,31 +29,31 @@ public class Parser(List<Token> tokens) {
 
 		return Previous();
 	}
-	private List<string> unaryOperators = new() { "BANG", "MINUS" };
+	private List<TokenType> unaryOperators = new() {TokenType.BANG, TokenType.MINUS };
 	public void Parse() {
 		Stack<string> operands = new();
 		Stack<Token> operators = new();
 		while (!IsAtEnd()) {
 			var token = Advance();
 			switch (token.TokenType) {
-				case "NUMBER": {
+				case TokenType.NUMBER: {
 						operands.Push(token.Literal.ToString());
 						break;
 					}
-				case "BANG":
-				case "MINUS": {
+				case TokenType.BANG:
+				case TokenType.MINUS: {
 						ParseUnary(token);
 						break;
 					}
-				case "LEFT_PAREN": {
+				case TokenType.LEFT_PAREN: {
 						ParseGroup();
 						break;
 					}
-				case "PLUS":
-				case "STAR":
-				case "SLASH":
-				case "GREATER":
-				case "LESS": {
+				case TokenType.PLUS:
+				case TokenType.STAR:
+				case TokenType.SLASH:
+				case TokenType.GREATER:
+				case TokenType.LESS: {
 						while (operators.Count > 0 && HasPrecedence(token, operators.Peek())) {
 							ProcessOperator(operands, operators);
 						}
@@ -78,7 +78,7 @@ public class Parser(List<Token> tokens) {
 	private void ParseUnary(Token op) {
 		Console.Write("(" + op.Lexeme + " ");
 		Token next = Peek();
-		if (next.TokenType == "LEFT_PAREN") {
+		if (next.TokenType ==TokenType.LEFT_PAREN) {
 			Advance();
 			ParseGroup();
 		}
@@ -88,7 +88,7 @@ public class Parser(List<Token> tokens) {
 		}
 		else {
 			Token v = Advance();
-			string value = v.TokenType == "NUMBER" || v.TokenType == "STRING" ? v.Literal.ToString() : v.Lexeme;
+			string value = v.TokenType == TokenType.NUMBER || v.TokenType == TokenType.STRING ? v.Literal.ToString() : v.Lexeme;
 			Console.Write(value);
 		}
 		Console.Write(")");
@@ -96,9 +96,9 @@ public class Parser(List<Token> tokens) {
 
 	private void ParseGroup() {
 		System.Console.Write("(group ");
-		while (!IsAtEnd() && !Check("RIGHT_PAREN")) {
+		while (!IsAtEnd() && !Check(TokenType.RIGHT_PAREN)) {
 			Token t = Peek();
-			if (t.TokenType == "LEFT_PAREN") {
+			if (t.TokenType == TokenType.LEFT_PAREN) {
 				Advance();
 				ParseGroup();
 			}
@@ -108,18 +108,18 @@ public class Parser(List<Token> tokens) {
 			}
 			else {
 				Advance();
-				string value = t.TokenType == "NUMBER" || t.TokenType == "STRING" ? t.Literal.ToString() : t.Lexeme;
+				string value = t.TokenType == TokenType.NUMBER || t.TokenType == TokenType.STRING ? t.Literal.ToString() : t.Lexeme;
 				Console.Write(value);
 			}
 		}
-		if (Check("RIGHT_PAREN")) {
+		if (Check(TokenType.RIGHT_PAREN)) {
 			Advance();
 		}
 		System.Console.Write(")");
 	}
 
 	private bool HasPrecedence(Token current, Token top) {
-		if ((current.TokenType == "STAR" || current.TokenType == "SLASH") && (top.TokenType == "PLUS" || top.TokenType == "MINUS")) {
+		if ((current.TokenType == TokenType.STAR || current.TokenType == TokenType.SLASH) && (top.TokenType == TokenType.PLUS || top.TokenType == TokenType.MINUS)) {
 			return false;
 		}
 		return true;

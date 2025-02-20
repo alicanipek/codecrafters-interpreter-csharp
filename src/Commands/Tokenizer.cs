@@ -22,82 +22,72 @@ public class Tokenizer(string content) {
 					}
 					break;
 				case '(':
-					tk = new("LEFT_PAREN", "(", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.LEFT_PAREN, "(");
 					break;
 				case ')':
-					tk = new("RIGHT_PAREN", ")", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.RIGHT_PAREN, ")");
 					break;
 				case '{':
-					tk = new("LEFT_BRACE", "{", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.LEFT_BRACE, "{");
 					break;
 				case '}':
-					tk = new("RIGHT_BRACE", "}", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.RIGHT_BRACE, "}");
 					break;
 				case ',':
-					tk = new("COMMA", ",", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.COMMA, ",");
 					break;
 				case '.':
-					tk = new("DOT", ".", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.DOT, ".");
 					break;
 				case '-':
-					tk = new("MINUS", "-", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.MINUS, "-");
 					break;
 				case '+':
-					tk = new("PLUS", "+", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.PLUS, "+");
 					break;
 				case ';':
-					tk = new("SEMICOLON", ";", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.SEMICOLON, ";");
 					break;
 				case '*':
-					tk = new("STAR", "*", null, line);
-					tokens.Add(tk);
+					AddToken(TokenType.STAR, "*");
 					break;
 				case '=':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new("EQUAL_EQUAL", "==", null, line);
+						tk = new(TokenType.EQUAL_EQUAL, "==", null);
 					}
 					else {
-						tk = new("EQUAL", "=", null, line);
+						tk = new(TokenType.EQUAL, "=", null);
 					}
 					tokens.Add(tk);
 					break;
 				case '!':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new("BANG_EQUAL", "!=", null, line);
+						tk = new(TokenType.BANG_EQUAL, "!=", null);
 					}
 					else {
-						tk = new("BANG", "!", null, line);
+						tk = new(TokenType.BANG, "!", null);
 					}
 					tokens.Add(tk);
 					break;
 				case '<':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new("LESS_EQUAL", "<=", null, line);
+						tk = new(TokenType.LESS_EQUAL, "<=", null);
 					}
 					else {
-						tk = new("LESS", "<", null, line);
+						tk = new(TokenType.LESS, "<", null);
 					}
 					tokens.Add(tk);
 					break;
 				case '>':
 					if (i + 1 < content.Length && content[i + 1] == '=') {
 						i++;
-						tk = new("GREATER_EQUAL", ">=", null, line);
+						tk = new(TokenType.GREATER_EQUAL, ">=", null);
 					}
 					else {
-						tk = new("GREATER", ">", null, line);
+						tk = new(TokenType.GREATER, ">", null);
 					}
 					tokens.Add(tk);
 					break;
@@ -111,8 +101,7 @@ public class Tokenizer(string content) {
 						i--;
 					}
 					else {
-						tk = new("SLASH", "/", null, line);
-						tokens.Add(tk);
+						AddToken(TokenType.SLASH, "/");
 					}
 					break;
 				case '\"':
@@ -130,8 +119,7 @@ public class Tokenizer(string content) {
 						break;
 					}
 					string value = content.Substring(start + 1, i - start - 1);
-					tk = new("STRING", $"\"{value}\"", value, line);
-					tokens.Add(tk);
+					AddToken(TokenType.STRING, $"\"{value}\"", value);
 					break;
 				case char digit when char.IsDigit(digit):
 					start = i;
@@ -141,9 +129,7 @@ public class Tokenizer(string content) {
 					value = content[start..i];
 					var v = double.Parse(value, CultureInfo.InvariantCulture);
 					var literal = v.ToString().Contains(".") ? v.ToString() : $"{v}.0";
-
-					tk = new("NUMBER", value, literal, line);
-					tokens.Add(tk);
+					AddToken(TokenType.NUMBER, value, literal);
 					i--;
 					break;
 				case '_':
@@ -154,10 +140,10 @@ public class Tokenizer(string content) {
 					}
 					value = content.Substring(start, i - start);
 					if (reserved.Contains(value)) {
-						tk = new(value.ToUpper(), value, null, line);
+						tk = new(Enum.Parse<TokenType>(value.ToUpper()), value, null);
 					}
 					else {
-						tk = new("IDENTIFIER", value, null, line);
+						tk = new(TokenType.IDENTIFIER, value, null);
 					}
 					tokens.Add(tk);
 					i--;
@@ -171,6 +157,14 @@ public class Tokenizer(string content) {
 					break;
 			}
 		}
-		tokens.Add(new("EOF", "", null, line));
+		tokens.Add(new(TokenType.EOF, "", null));
+	}
+
+	private void AddToken(TokenType type, string lexeme) {
+		AddToken(type, lexeme, null);
+	}
+
+	private void AddToken(TokenType type, string lexeme, Object literal) {
+		tokens.Add(new Token(type, lexeme, literal));
 	}
 }
