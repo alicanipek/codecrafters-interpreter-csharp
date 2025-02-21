@@ -1,3 +1,5 @@
+using System.Globalization;
+
 public class RecursiveParser {
 	private readonly List<Token> tokens;
 	private int current = 0;
@@ -84,10 +86,9 @@ public class RecursiveParser {
 		if (Match(TokenType.TRUE)) return new LiteralExpr(true);
 		if (Match(TokenType.NIL)) return new LiteralExpr(null);
 		if (Match(TokenType.NUMBER)) {
-			var p = Previous().Literal.ToString();
-			var literal = p.Contains(".") ? p.ToString() : $"{p}.0";
-
-			return new LiteralExpr(literal);
+			var value = Convert.ToDouble(Previous().Literal, CultureInfo.InvariantCulture);
+			
+			return new LiteralExpr(value);
 		}
 		if (Match(TokenType.STRING)) {
 			return new LiteralExpr(Previous().Literal);
@@ -183,45 +184,3 @@ public class RecursiveParser {
 public class ParseError : Exception {
 	public ParseError(string message) : base(message) { }
 }
-
-// public class Binary {
-// 	public object Left { get; }
-// 	public Token Operator { get; }
-// 	public object Right { get; }
-
-// 	public Binary(object left, Token op, object right) {
-// 		Left = left;
-// 		Operator = op;
-// 		Right = right;
-// 	}
-// 	public override string ToString() {
-// 		return $"({Operator.Lexeme} {Left} {Right})";
-// 	}
-// }
-
-// public class Unary {
-// 	public Token Operator { get; }
-// 	public object Right { get; }
-
-// 	public Unary(Token op, object right) {
-// 		Operator = op;
-// 		Right = right;
-// 	}
-
-// 	public override string ToString() {
-// 		return $"({Operator.Lexeme} {Right})";
-// 	}
-// }
-
-// public class Grouping {
-// 	public object Expression { get; }
-
-// 	public Grouping(object expression) {
-// 		Expression = expression;
-// 	}
-
-
-// 	public override string ToString() {
-// 		return $"(group {Expression})";
-// 	}
-// }

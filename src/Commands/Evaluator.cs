@@ -111,10 +111,6 @@ public class LiteralExpr : Expr {
 	}
 
 	public override object Evaluate() {
-		if (Value != null && double.TryParse(Value.ToString(), out double outValue)) {
-
-			return outValue;
-		}
 		return Value;
 	}
 
@@ -122,8 +118,13 @@ public class LiteralExpr : Expr {
 		if(Value == null) {
 			return "nil";
 		}
-		if(bool.TryParse(Value.ToString(), out bool outValue)) {
-			return outValue.ToString().ToLower();
+		if(Value is bool) {
+			return Value.ToString().ToLower();
+		}
+		if(Value is double) {
+			var p = Value.ToString();
+			var literal = p.Contains(".") ? p.ToString() : $"{p}.0";
+			return literal;
 		}
 		return $"{Value}";
 	}
