@@ -74,7 +74,14 @@ public class UnaryExpr : Expr {
 
 		switch (Operator.TokenType) {
 			case TokenType.MINUS:
-				return -(double)right;
+				try
+				{
+					return -(double)right;
+				}
+				catch (System.Exception)
+				{
+					throw new Exception("Operand must be a number.");
+				}
 			case TokenType.BANG:
 				return !IsTruthy(right);
 			default:
@@ -136,7 +143,7 @@ public class Evaluator {
 			return expression.Evaluate();
 		}
 		catch (Exception ex) {
-			Console.WriteLine($"Runtime error: {ex.Message}");
+			Environment.Exit(70);
 			return null;
 		}
 	}
