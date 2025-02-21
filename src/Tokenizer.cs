@@ -141,6 +141,8 @@ public class Tokenizer(string content) {
 					value = content.Substring(start, i - start);
 					if (reserved.Contains(value)) {
 						tk = new(Enum.Parse<TokenType>(value.ToUpper()), value, null, line);
+					}else if(value == "print"){
+						tk = new(TokenType.PRINT, value, null, line);
 					}
 					else {
 						tk = new(TokenType.IDENTIFIER, value, null, line);

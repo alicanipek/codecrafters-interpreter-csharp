@@ -9,7 +9,7 @@ public class RecursiveParser {
 		this.tokens = tokens;
 	}
 
-	public Expr Parse() {
+	public Expr ParseExpression() {
 		try {
 			return Expression();
 		}
@@ -17,6 +17,39 @@ public class RecursiveParser {
 			Synchronize(); // Recover from the error
 			return null; // Return null in case of error
 		}
+	} 
+	public List<Statement> Parse() {
+		try {
+			List<Statement> statements = new();
+			while (!IsAtEnd()) {
+				Statement statement = Statement();
+				if (statement != null) {
+					statements.Add(statement);
+				}
+			}
+			return statements;
+		}
+		catch (ParseError) {
+			Synchronize(); // Recover from the error
+			return null; // Return null in case of error
+		}
+	}
+
+	private Statement Statement() {
+		if (Match(TokenType.PRINT)) return PrintStatement();
+		return ExpressionStatement();
+	}
+
+	private Statement PrintStatement() {
+		Expr value = Expression();
+		Consume(TokenType.SEMICOLON, "Expect ';' after value.");
+		return new PrintStatement(value);
+	}
+
+	private Statement ExpressionStatement() {
+		Expr expr = Expression();
+		Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+		return new ExpressionStatement(expr);
 	}
 
 	private Expr Expression() {
