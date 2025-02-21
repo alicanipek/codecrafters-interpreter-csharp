@@ -36,7 +36,7 @@ if (!string.IsNullOrEmpty(fileContents)) {
 
                 RecursiveParser parser = new(tokenizer.tokens);
                 object result = parser.Parse();
-                if(parser.hadError) {
+                if (parser.hadError) {
                     Environment.Exit(65);
                 }
                 System.Console.WriteLine(result);
@@ -49,13 +49,21 @@ if (!string.IsNullOrEmpty(fileContents)) {
 
                 RecursiveParser parser = new(tokenizer.tokens);
                 Expr result = parser.Parse();
-                if(parser.hadError) {
+                if (parser.hadError) {
                     Environment.Exit(65);
                 }
 
                 Evaluator evaluator = new();
                 var value = evaluator.Evaluate(result);
-                System.Console.WriteLine(value);
+                if (value == null) {
+                    System.Console.WriteLine("nil");
+                }
+                else if (typeof(bool) == value.GetType()) {
+                    System.Console.WriteLine(value.ToString().ToLower());
+                }
+                else {
+                    System.Console.WriteLine(value);
+                }
                 break;
             }
         default:

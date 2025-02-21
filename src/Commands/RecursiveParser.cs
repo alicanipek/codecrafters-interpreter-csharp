@@ -80,10 +80,17 @@ public class RecursiveParser {
 	}
 
 	private Expr Primary() {
-		if (Match(TokenType.NUMBER, TokenType.STRING, TokenType.TRUE, TokenType.FALSE, TokenType.NIL)) {
-			var v = Previous();
-			string value = v.TokenType == TokenType.NUMBER || v.TokenType == TokenType.STRING ? v.Literal.ToString() : v.Lexeme;
-			return new LiteralExpr(value);
+		if (Match(TokenType.FALSE)) return new LiteralExpr(false);
+		if (Match(TokenType.TRUE)) return new LiteralExpr(true);
+		if (Match(TokenType.NIL)) return new LiteralExpr(null);
+		if (Match(TokenType.NUMBER)) {
+			var p = Previous().Literal.ToString();
+			var literal = p.Contains(".") ? p.ToString() : $"{p}.0";
+
+			return new LiteralExpr(literal);
+		}
+		if (Match(TokenType.STRING)) {
+			return new LiteralExpr(Previous().Literal);
 		}
 
 		if (Match(TokenType.LEFT_PAREN)) {

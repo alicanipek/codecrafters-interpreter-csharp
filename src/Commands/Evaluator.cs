@@ -111,10 +111,20 @@ public class LiteralExpr : Expr {
 	}
 
 	public override object Evaluate() {
+		if (Value != null && double.TryParse(Value.ToString(), out double outValue)) {
+
+			return outValue;
+		}
 		return Value;
 	}
 
 	public override string ToString() {
+		if(Value == null) {
+			return "nil";
+		}
+		if(bool.TryParse(Value.ToString(), out bool outValue)) {
+			return outValue.ToString().ToLower();
+		}
 		return $"{Value}";
 	}
 }
