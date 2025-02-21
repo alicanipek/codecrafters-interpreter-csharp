@@ -26,7 +26,7 @@ public class BinaryExpr : Expr {
 			case TokenType.PLUS:
 				if (left is double && right is double)
 					return (double)left + (double)right;
-				if (left is string || right is string)
+				if (left is string && right is string)
 					return left.ToString() + right.ToString();
 				throw new Exception("Operands must be two numbers or two strings.");
 			case TokenType.SLASH:
