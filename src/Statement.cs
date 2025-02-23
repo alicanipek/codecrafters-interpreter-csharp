@@ -39,15 +39,15 @@ public class ExpressionStatement : Statement {
 	}
 
 	public override void Execute() {
-		var value = Expression.Evaluate();
-		if (value == null) {
-			Console.WriteLine("nil");
-		}
-		else if (typeof(bool) == value.GetType()) {
-			Console.WriteLine(value.ToString().ToLower());
-		}
-		else {
-			Console.WriteLine(value);
-		}
+		Expression.Evaluate();
+		// if (value == null) {
+		// 	Console.WriteLine("nil");
+		// }
+		// else if (typeof(bool) == value.GetType()) {
+		// 	Console.WriteLine(value.ToString().ToLower());
+		// }
+		// else {
+		// 	Console.WriteLine(value);
+		// }
 	}
 }
