@@ -5,7 +5,7 @@ public class LiteralExpr : Expr {
 		Value = value;
 	}
 
-	public override object Evaluate() {
+	public override object Evaluate(Environment environment) {
 		return Value;
 	}
 

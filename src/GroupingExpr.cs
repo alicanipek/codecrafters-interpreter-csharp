@@ -7,7 +7,7 @@ public class GroupingExpr : Expr {
 	public override string ToString() {
 		return $"(group {Expression})";
 	}
-	public override object Evaluate() {
-		return Expression.Evaluate();
+	public override object Evaluate(Environment environment) {
+		return Expression.Evaluate(environment);
 	}
 }

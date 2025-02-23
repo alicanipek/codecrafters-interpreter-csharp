@@ -1,5 +1,5 @@
 public abstract class Statement {
-	public abstract void Execute();
+	public abstract void Execute(Environment environment);
 }
 
 public class PrintStatement : Statement {
@@ -13,8 +13,8 @@ public class PrintStatement : Statement {
 		return $"(print {Expression})";
 	}
 
-	public override void Execute() {
-		object value = Expression.Evaluate();
+	public override void Execute(Environment environment) {
+		object value = Expression.Evaluate(environment);
 		if (value == null) {
 			Console.WriteLine("nil");
 		}
@@ -38,8 +38,8 @@ public class ExpressionStatement : Statement {
 		return Expression.ToString();
 	}
 
-	public override void Execute() {
-		Expression.Evaluate();
+	public override void Execute(Environment environment) {
+		Expression.Evaluate(environment);
 		// if (value == null) {
 		// 	Console.WriteLine("nil");
 		// }
@@ -49,5 +49,27 @@ public class ExpressionStatement : Statement {
 		// else {
 		// 	Console.WriteLine(value);
 		// }
+	}
+}
+
+public class VarStatement : Statement {
+	public Token Name { get; }
+	public Expr Initializer { get; }
+
+	public VarStatement(Token name, Expr initializer) {
+		Name = name;
+		Initializer = initializer;
+	}
+
+	public override string ToString() {
+		return $"(var {Name.Lexeme} = {Initializer})";
+	}
+
+	public override void Execute(Environment environment) {
+		object value = null;
+		if (Initializer != null) {
+			value = Initializer.Evaluate(environment);
+		}
+		environment.Define(Name.Lexeme, value);
 	}
 }

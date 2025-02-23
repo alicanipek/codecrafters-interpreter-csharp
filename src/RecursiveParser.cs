@@ -22,10 +22,7 @@ public class RecursiveParser {
 		try {
 			List<Statement> statements = new();
 			while (!IsAtEnd()) {
-				Statement statement = Statement();
-				if (statement != null) {
-					statements.Add(statement);
-				}
+				statements.Add(Declaration());
 			}
 			return statements;
 		}
@@ -33,6 +30,29 @@ public class RecursiveParser {
 			Synchronize(); // Recover from the error
 			return null; // Return null in case of error
 		}
+	}
+
+	private Statement Declaration(){
+		try {
+			if (Match(TokenType.VAR)) return VarDeclaration();
+			return Statement();
+		}
+		catch (ParseError) {
+			Synchronize(); // Recover from the error
+			return null; // Return null in case of error
+		}
+	}
+
+	private Statement VarDeclaration(){
+		Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+		Expr initializer = null;
+		if (Match(TokenType.EQUAL)) {
+			initializer = Expression();
+		}
+
+		Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+		return new VarStatement(name, initializer);
 	}
 
 	private Statement Statement() {
@@ -52,6 +72,9 @@ public class RecursiveParser {
 		return new ExpressionStatement(expr);
 	}
 
+	private Statement VarStatement(Token name, Expr initializer) {
+		return new VarStatement(name, initializer);
+	}
 	private Expr Expression() {
 		return Equality();
 	}
@@ -125,6 +148,10 @@ public class RecursiveParser {
 		}
 		if (Match(TokenType.STRING)) {
 			return new LiteralExpr(Previous().Literal);
+		}
+
+		if(Match(TokenType.IDENTIFIER)){
+			return new VarExpr(Previous());
 		}
 
 		if (Match(TokenType.LEFT_PAREN)) {

@@ -12,9 +12,9 @@ public class BinaryExpr : Expr {
 		return $"({Operator.Lexeme} {Left} {Right})";
 	}
 
-	public override object Evaluate() {
-		object left = Left.Evaluate();
-		object right = Right.Evaluate();
+	public override object Evaluate(Environment environment) {
+		object left = Left.Evaluate(environment);
+		object right = Right.Evaluate(environment);
 
 		switch (Operator.TokenType) {
 			case TokenType.MINUS:

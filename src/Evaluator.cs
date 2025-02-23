@@ -1,11 +1,19 @@
 
 public class Evaluator {
+	Environment global;
+	public Evaluator() {
+		global = new Environment();
+	}
+	public Evaluator(Environment environment) {
+		global = environment;
+	}
+
 	public object Evaluate(Expr expression) {
 		try {
-			return expression.Evaluate();
+			return expression.Evaluate(global);
 		}
 		catch (Exception ex) {
-			Environment.Exit(70);
+			System.Environment.Exit(70);
 			return null;
 		}
 	}
@@ -13,11 +21,11 @@ public class Evaluator {
 		try {
 			foreach (var statement in statements)
 			{
-				statement.Execute();
+				statement.Execute(global);
 			}
 		}
 		catch (Exception ex) {
-			Environment.Exit(70);
+			System.Environment.Exit(70);
 		}
 	}
 }

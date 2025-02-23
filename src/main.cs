@@ -4,7 +4,7 @@ public class Program {
     private static void Main(string[] args) {
         if (args.Length < 2) {
             Console.Error.WriteLine("Usage: ./your_program.sh tokenize <filename>");
-            Environment.Exit(1);
+            System.Environment.Exit(1);
         }
 
         string command = args[0];
@@ -12,7 +12,7 @@ public class Program {
 
 
         string fileContents = File.ReadAllText(filename);
-
+        Environment environment = new Environment();
         if (!string.IsNullOrEmpty(fileContents)) {
             switch (command) {
                 case "tokenize": {
@@ -28,7 +28,7 @@ public class Program {
                         foreach (Token token in tokenizer.tokens) {
                             Console.WriteLine(token);
                         }
-                        Environment.Exit(tokenizer.errorCode);
+                        System.Environment.Exit(tokenizer.errorCode);
                         break;
                     }
                 case "parse": {
@@ -38,7 +38,7 @@ public class Program {
                         RecursiveParser parser = new(tokenizer.tokens);
                         object result = parser.ParseExpression();
                         if (parser.hadError) {
-                            Environment.Exit(65);
+                            System.Environment.Exit(65);
                         }
                         Console.WriteLine(result);
 
@@ -51,15 +51,15 @@ public class Program {
                         RecursiveParser parser = new(tokenizer.tokens);
                         Expr result = parser.ParseExpression();
                         if (parser.hadError) {
-                            Environment.Exit(70);
+                            System.Environment.Exit(70);
                         }
 
-                        Evaluator evaluator = new();
+                        Evaluator evaluator = new(environment);
                         var value = evaluator.Evaluate(result);
                         if (value == null) {
                             System.Console.WriteLine("nil");
                         }
-                        else if (typeof(bool) == value.GetType()) {
+                        else if (value is bool) {
                             System.Console.WriteLine(value.ToString().ToLower());
                         }
                         else {
@@ -74,24 +74,24 @@ public class Program {
                         RecursiveParser parser = new(tokenizer.tokens);
                         List<Statement> result = parser.Parse();
                         if (parser.hadError) {
-                            Environment.Exit(65);
+                            System.Environment.Exit(65);
                         }
 
-                        Evaluator evaluator = new();
+                        Evaluator evaluator = new(environment);
                         evaluator.Run(result);
 
                         break;
                     }
                 default:
                     Console.Error.WriteLine("Invalid command.");
-                    Environment.Exit(1);
+                    System.Environment.Exit(1);
                     break;
             }
 
         }
         else {
             Console.WriteLine("EOF  null");
-            Environment.Exit(0);
+            System.Environment.Exit(0);
         }
     }
 }
