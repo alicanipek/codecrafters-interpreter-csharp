@@ -72,11 +72,25 @@ public class RecursiveParser {
 		return new ExpressionStatement(expr);
 	}
 
-	private Statement VarStatement(Token name, Expr initializer) {
-		return new VarStatement(name, initializer);
-	}
 	private Expr Expression() {
-		return Equality();
+		return Assignment();
+	}
+
+	private Expr Assignment(){
+		Expr expr = Equality();
+		if(Match(TokenType.EQUAL)){
+			Token equals = Previous();
+			Expr value = Assignment();
+
+			if(expr is VarExpr varExpr){
+				Token name = varExpr.Name;
+				return new AssignExpr(name, value);
+			}
+
+			Error(equals, "Invalid assignment target.");
+		}
+
+		return expr;
 	}
 
 	private Expr Equality() {
