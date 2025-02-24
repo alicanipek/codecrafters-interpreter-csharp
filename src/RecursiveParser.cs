@@ -57,6 +57,7 @@ public class RecursiveParser {
 
 	private Statement Statement() {
 		if (Match(TokenType.PRINT)) return PrintStatement();
+		if(Match(TokenType.WHILE)) return WhileStatement();
 		if (Match(TokenType.IF)) return IfStatement();
 		if(Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 		return ExpressionStatement();
@@ -90,6 +91,14 @@ public class RecursiveParser {
 		}
 
 		return new IfStatement(condition, thenBranch, elseBranch);
+	}
+
+	private Statement WhileStatement() {
+		Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+		Expr condition = Expression();
+		Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+		Statement body = Statement();
+		return new WhileStatement(condition, body);
 	}
 
 	private Statement ExpressionStatement() {
@@ -301,6 +310,22 @@ public class RecursiveParser {
 			Advance();
 		}
 	}
+}
+
+internal class WhileStatement : Statement {
+    private Expr condition;
+    private Statement body;
+
+    public WhileStatement(Expr condition, Statement body) {
+        this.condition = condition;
+        this.body = body;
+    }
+
+    public override void Execute(Environment environment) {
+		while (Utils.IsTruthy(condition.Evaluate(environment))) {
+			body.Execute(environment);
+		}
+    }
 }
 
 public class ParseError : Exception {
