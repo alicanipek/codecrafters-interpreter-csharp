@@ -29,6 +29,34 @@ public class PrintStatement : Statement {
 	}
 }
 
+public class IfStatement : Statement {
+	public Expr Condition { get; }
+	public Statement ThenBranch { get; }
+	public Statement ElseBranch { get; }
+
+	public IfStatement(Expr condition, Statement thenBranch, Statement elseBranch) {
+		Condition = condition;
+		ThenBranch = thenBranch;
+		ElseBranch = elseBranch;
+	}
+
+	public override string ToString() {
+		return $"(if {Condition} {ThenBranch} {ElseBranch})";
+	}
+
+	public override void Execute(Environment environment) {
+		object value = Condition.Evaluate(environment);
+		if (value is bool v) {
+			if (v) {
+				ThenBranch.Execute(environment);
+			}
+			else {
+				ElseBranch?.Execute(environment);
+			}
+		}
+	}
+}
+
 public class ExpressionStatement : Statement {
 	public Expr Expression { get; }
 

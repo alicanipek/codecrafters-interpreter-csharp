@@ -57,11 +57,3 @@ public class Environment {
 		return result;
 	}
 }
-
-[Serializable]
-internal class RuntimeError : Exception {
-    private Token token;
-    public RuntimeError(Token token, string message): base(message) {
-        this.token = token;
-    }
-}

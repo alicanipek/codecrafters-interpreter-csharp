@@ -57,6 +57,7 @@ public class RecursiveParser {
 
 	private Statement Statement() {
 		if (Match(TokenType.PRINT)) return PrintStatement();
+		if (Match(TokenType.IF)) return IfStatement();
 		if(Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 		return ExpressionStatement();
 	}
@@ -75,6 +76,20 @@ public class RecursiveParser {
 		Expr value = Expression();
 		Consume(TokenType.SEMICOLON, "Expect ';' after value.");
 		return new PrintStatement(value);
+	}
+
+	private Statement IfStatement(){
+		Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+		Expr condition = Expression();
+		Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+
+		Statement thenBranch = Statement();
+		Statement elseBranch = null;
+		if(Match(TokenType.ELSE)){
+			elseBranch = Statement();
+		}
+
+		return new IfStatement(condition, thenBranch, elseBranch);
 	}
 
 	private Statement ExpressionStatement() {
