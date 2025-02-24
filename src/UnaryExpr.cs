@@ -24,15 +24,12 @@ public class UnaryExpr : Expr {
 					throw new Exception("Operand must be a number.");
 				}
 			case TokenType.BANG:
-				return !IsTruthy(right);
+				return !Utils.IsTruthy(right);
 			default:
 				throw new Exception($"Unknown operator: {Operator.TokenType}");
 		}
 	}
 
-	private bool IsTruthy(object value) {
-		if (value == null) return false;
-		if (value is bool) return (bool)value;
-		return true;
-	}
+
 }
+

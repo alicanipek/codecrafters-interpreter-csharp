@@ -1,5 +1,1 @@
-var quz;
-quz = 1;
-print quz;
-print quz = 2;
-print quz;
+if (false or "ok") print "hello";

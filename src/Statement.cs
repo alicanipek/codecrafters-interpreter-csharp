@@ -46,13 +46,11 @@ public class IfStatement : Statement {
 
 	public override void Execute(Environment environment) {
 		object value = Condition.Evaluate(environment);
-		if (value is bool v) {
-			if (v) {
-				ThenBranch.Execute(environment);
-			}
-			else {
-				ElseBranch?.Execute(environment);
-			}
+		if(Utils.IsTruthy(value)) {
+			ThenBranch.Execute(environment);
+		}
+		else {
+			ElseBranch?.Execute(environment);
 		}
 	}
 }
