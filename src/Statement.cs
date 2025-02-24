@@ -46,7 +46,7 @@ public class IfStatement : Statement {
 
 	public override void Execute(Environment environment) {
 		object value = Condition.Evaluate(environment);
-		if(Utils.IsTruthy(value)) {
+		if (Utils.IsTruthy(value)) {
 			ThenBranch.Execute(environment);
 		}
 		else {

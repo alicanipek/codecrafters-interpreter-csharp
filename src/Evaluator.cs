@@ -9,6 +9,7 @@ public class Evaluator {
 	}
 
 	public object Evaluate(Expr expression) {
+		global.Define("clock", new Clock());
 		try {
 			return expression.Evaluate(global);
 		}
@@ -18,6 +19,7 @@ public class Evaluator {
 		}
 	}
 	public void Run(List<Statement> statements) {
+		global.Define("clock", new Clock());
 		try {
 			foreach (var statement in statements)
 			{
