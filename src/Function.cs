@@ -17,8 +17,16 @@ public class Function : Callable {
 		for (int i = 0; i < declaration.Parameters.Count; i++) {
 			functionEnvironment.Define(declaration.Parameters[i].Lexeme, arguments[i]);
 		}
+		try
+		{
+		
 		BlockStatement blockStatement = new BlockStatement(declaration.Body);
-		blockStatement.Execute(functionEnvironment);
+		blockStatement.Execute(functionEnvironment);	
+		}
+		catch (ReturnException returnValue)
+		{
+			return returnValue.returnValue;
+		}
 		return null;
 	}
 }

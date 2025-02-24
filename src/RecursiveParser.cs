@@ -78,6 +78,7 @@ public class RecursiveParser {
 
 	private Statement Statement() {
 		if (Match(TokenType.PRINT)) return PrintStatement();
+		if (Match(TokenType.RETURN)) return ReturnStatement();
 		if (Match(TokenType.WHILE)) return WhileStatement();
 		if (Match(TokenType.FOR)) return ForStatement();
 		if (Match(TokenType.IF)) return IfStatement();
@@ -163,6 +164,16 @@ public class RecursiveParser {
 		Expr expr = Expression();
 		Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
 		return new ExpressionStatement(expr);
+	}
+
+	private Statement ReturnStatement() {
+		Token keyword = Previous();
+		Expr value = null;
+		if (!Check(TokenType.SEMICOLON)) {
+			value = Expression();
+		}
+		Consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+		return new ReturnStatement(keyword, value);
 	}
 
 	private Expr Expression() {
@@ -397,6 +408,3 @@ public class RecursiveParser {
 	}
 }
 
-public class ParseError : Exception {
-	public ParseError(string message) : base(message) { }
-}
