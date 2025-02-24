@@ -35,7 +35,7 @@ public class Program {
                         Tokenizer tokenizer = new(fileContents);
                         tokenizer.Tokenize();
 
-                        RecursiveParser parser = new(tokenizer.tokens);
+                        Parser parser = new(tokenizer.tokens);
                         object result = parser.ParseExpression();
                         if (parser.hadError) {
                             System.Environment.Exit(65);
@@ -48,7 +48,7 @@ public class Program {
                         Tokenizer tokenizer = new(fileContents);
                         tokenizer.Tokenize();
 
-                        RecursiveParser parser = new(tokenizer.tokens);
+                        Parser parser = new(tokenizer.tokens);
                         Expr result = parser.ParseExpression();
                         if (parser.hadError) {
                             System.Environment.Exit(70);
@@ -71,7 +71,7 @@ public class Program {
                         Tokenizer tokenizer = new(fileContents);
                         tokenizer.Tokenize();
 
-                        RecursiveParser parser = new(tokenizer.tokens);
+                        Parser parser = new(tokenizer.tokens);
                         List<Statement> result = parser.Parse();
                         if (parser.hadError) {
                             System.Environment.Exit(65);

@@ -1,11 +1,11 @@
 using System.Globalization;
 
-public class RecursiveParser {
+public class Parser {
 	private readonly List<Token> tokens;
 	private int current = 0;
 	public bool hadError = false;
 
-	public RecursiveParser(List<Token> tokens) {
+	public Parser(List<Token> tokens) {
 		this.tokens = tokens;
 	}
 
