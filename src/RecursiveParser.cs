@@ -17,7 +17,7 @@ public class RecursiveParser {
 			Synchronize(); // Recover from the error
 			return null; // Return null in case of error
 		}
-	} 
+	}
 	public List<Statement> Parse() {
 		try {
 			List<Statement> statements = new();
@@ -32,7 +32,7 @@ public class RecursiveParser {
 		}
 	}
 
-	private Statement Declaration(){
+	private Statement Declaration() {
 		try {
 			if (Match(TokenType.VAR)) return VarDeclaration();
 			return Statement();
@@ -43,7 +43,7 @@ public class RecursiveParser {
 		}
 	}
 
-	private Statement VarDeclaration(){
+	private Statement VarDeclaration() {
 		Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
 
 		Expr initializer = null;
@@ -57,9 +57,10 @@ public class RecursiveParser {
 
 	private Statement Statement() {
 		if (Match(TokenType.PRINT)) return PrintStatement();
-		if(Match(TokenType.WHILE)) return WhileStatement();
+		if (Match(TokenType.WHILE)) return WhileStatement();
+		if (Match(TokenType.FOR)) return ForStatement();
 		if (Match(TokenType.IF)) return IfStatement();
-		if(Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
+		if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 		return ExpressionStatement();
 	}
 
@@ -79,14 +80,14 @@ public class RecursiveParser {
 		return new PrintStatement(value);
 	}
 
-	private Statement IfStatement(){
+	private Statement IfStatement() {
 		Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
 		Expr condition = Expression();
 		Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
 
 		Statement thenBranch = Statement();
 		Statement elseBranch = null;
-		if(Match(TokenType.ELSE)){
+		if (Match(TokenType.ELSE)) {
 			elseBranch = Statement();
 		}
 
@@ -101,6 +102,42 @@ public class RecursiveParser {
 		return new WhileStatement(condition, body);
 	}
 
+	private Statement ForStatement() {
+		Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+		Statement initializer;
+		if (Match(TokenType.SEMICOLON)) {
+			initializer = null;
+		}
+		else if (Match(TokenType.VAR)) {
+			initializer = VarDeclaration();
+		}
+		else {
+			initializer = ExpressionStatement();
+		}
+
+		Expr condition = null;
+		if (!Check(TokenType.SEMICOLON)) {
+			condition = Expression();
+		}
+		Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+		Expr increment = null;
+		if (!Check(TokenType.RIGHT_PAREN)) {
+			increment = Expression();
+		}
+		Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+		Statement body = Statement();
+		if(increment != null) {
+			body = new BlockStatement(new List<Statement> { body, new ExpressionStatement(increment) });
+		}
+		condition ??= new LiteralExpr(true);
+		body = new WhileStatement(condition, body);
+		if(initializer != null) {
+			body = new BlockStatement(new List<Statement> { initializer, body });
+		}
+		return body;
+	}
+
 	private Statement ExpressionStatement() {
 		Expr expr = Expression();
 		Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
@@ -111,13 +148,13 @@ public class RecursiveParser {
 		return Assignment();
 	}
 
-	private Expr Assignment(){
+	private Expr Assignment() {
 		Expr expr = Or();
-		if(Match(TokenType.EQUAL)){
+		if (Match(TokenType.EQUAL)) {
 			Token equals = Previous();
 			Expr value = Assignment();
 
-			if(expr is VarExpr varExpr){
+			if (expr is VarExpr varExpr) {
 				Token name = varExpr.Name;
 				return new AssignExpr(name, value);
 			}
@@ -142,14 +179,14 @@ public class RecursiveParser {
 
 	private Expr And() {
 		Expr expr = Equality();
-		while(Match(TokenType.AND)){
+		while (Match(TokenType.AND)) {
 			Token op = Previous();
 			Expr right = Equality();
 			expr = new LogicalExpr(expr, op, right);
 		}
 		return expr;
 	}
-	
+
 	private Expr Equality() {
 		Expr expr = Comparison();
 
@@ -214,14 +251,14 @@ public class RecursiveParser {
 		if (Match(TokenType.NIL)) return new LiteralExpr(null);
 		if (Match(TokenType.NUMBER)) {
 			var value = Convert.ToDouble(Previous().Literal, CultureInfo.InvariantCulture);
-			
+
 			return new LiteralExpr(value);
 		}
 		if (Match(TokenType.STRING)) {
 			return new LiteralExpr(Previous().Literal);
 		}
 
-		if(Match(TokenType.IDENTIFIER)){
+		if (Match(TokenType.IDENTIFIER)) {
 			return new VarExpr(Previous());
 		}
 
@@ -313,19 +350,19 @@ public class RecursiveParser {
 }
 
 internal class WhileStatement : Statement {
-    private Expr condition;
-    private Statement body;
+	private Expr condition;
+	private Statement body;
 
-    public WhileStatement(Expr condition, Statement body) {
-        this.condition = condition;
-        this.body = body;
-    }
+	public WhileStatement(Expr condition, Statement body) {
+		this.condition = condition;
+		this.body = body;
+	}
 
-    public override void Execute(Environment environment) {
+	public override void Execute(Environment environment) {
 		while (Utils.IsTruthy(condition.Evaluate(environment))) {
 			body.Execute(environment);
 		}
-    }
+	}
 }
 
 public class ParseError : Exception {
