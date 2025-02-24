@@ -127,3 +127,38 @@ public class BlockStatement : Statement {
 		}
 	}
 }
+
+
+
+public class FunctionStatement : Statement {
+    public Token Name;
+    public List<Token> Parameters;
+    public List<Statement> Body;
+
+    public FunctionStatement(Token name, List<Token> parameters, List<Statement> body) {
+        this.Name = name;
+        this.Parameters = parameters;
+        this.Body = body;
+    }
+
+    public override void Execute(Environment environment) {
+		Function function = new(this);
+		environment.Define(Name.Lexeme, function);
+    }
+}
+
+public class WhileStatement : Statement {
+	private Expr condition;
+	private Statement body;
+
+	public WhileStatement(Expr condition, Statement body) {
+		this.condition = condition;
+		this.body = body;
+	}
+
+	public override void Execute(Environment environment) {
+		while (Utils.IsTruthy(condition.Evaluate(environment))) {
+			body.Execute(environment);
+		}
+	}
+}

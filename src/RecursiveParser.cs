@@ -34,6 +34,7 @@ public class RecursiveParser {
 
 	private Statement Declaration() {
 		try {
+			if (Match(TokenType.FUN)) return FunctionDeclaration("function");
 			if (Match(TokenType.VAR)) return VarDeclaration();
 			return Statement();
 		}
@@ -41,6 +42,26 @@ public class RecursiveParser {
 			Synchronize(); // Recover from the error
 			return null; // Return null in case of error
 		}
+	}
+
+	private Statement FunctionDeclaration(string kind) {
+		Token name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+		Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+		List<Token> parameters = new();
+		if(!Check(TokenType.RIGHT_PAREN)) {
+			do {
+				if (parameters.Count >= 255) {
+					Error(Peek(), "Cannot have more than 255 parameters.");
+				}
+				parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
+			} while (Match(TokenType.COMMA));
+		}
+		Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+		Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+		List<Statement> body = Block();
+		return new FunctionStatement(name, parameters, body);
+
 	}
 
 	private Statement VarDeclaration() {
@@ -372,22 +393,6 @@ public class RecursiveParser {
 			}
 
 			Advance();
-		}
-	}
-}
-
-internal class WhileStatement : Statement {
-	private Expr condition;
-	private Statement body;
-
-	public WhileStatement(Expr condition, Statement body) {
-		this.condition = condition;
-		this.body = body;
-	}
-
-	public override void Execute(Environment environment) {
-		while (Utils.IsTruthy(condition.Evaluate(environment))) {
-			body.Execute(environment);
 		}
 	}
 }
