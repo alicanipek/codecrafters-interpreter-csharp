@@ -10,8 +10,8 @@ public class UnaryExpr : Expr {
 		return $"({Operator.Lexeme} {Right})";
 	}
 
-	public override object Evaluate(Environment environment) {
-		object right = Right.Evaluate(environment);
+	public override object Evaluate(Evaluator evaluator) {
+		object right = Right.Evaluate(evaluator);
 
 		switch (Operator.TokenType) {
 			case TokenType.MINUS:

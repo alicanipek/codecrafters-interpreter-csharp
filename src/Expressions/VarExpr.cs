@@ -9,7 +9,7 @@ public class VarExpr : Expr {
 		return Name.Lexeme;
 	}
 
-    public override object Evaluate(Environment environment) {
-		return environment.Get(Name);
+    public override object Evaluate(Evaluator evaluator) {
+		return evaluator.LookupVariable(Name, this);
     }
 }

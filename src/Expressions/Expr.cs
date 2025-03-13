@@ -1,3 +1,3 @@
 public abstract class Expr {
-	public abstract object Evaluate(Environment environment);
+	public abstract object Evaluate(Evaluator evaluator);
 }

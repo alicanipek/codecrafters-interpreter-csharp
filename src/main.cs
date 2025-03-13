@@ -1,5 +1,4 @@
-using System;
-using System.IO;
+
 public class Program {
     private static void Main(string[] args) {
         if (args.Length < 2) {
@@ -12,7 +11,6 @@ public class Program {
 
 
         string fileContents = File.ReadAllText(filename);
-        Environment environment = new Environment();
         if (!string.IsNullOrEmpty(fileContents)) {
             switch (command) {
                 case "tokenize": {
@@ -54,15 +52,13 @@ public class Program {
                             System.Environment.Exit(70);
                         }
 
-                        Evaluator evaluator = new(environment);
-                        var value = evaluator.Evaluate(result);
+                        Evaluator eval = new();
+                        var value = eval.Evaluate(result);
                         if (value == null) {
                             System.Console.WriteLine("nil");
-                        }
-                        else if (value is bool) {
+                        } else if (value is bool) {
                             System.Console.WriteLine(value.ToString().ToLower());
-                        }
-                        else {
+                        } else {
                             System.Console.WriteLine(value);
                         }
                         break;
@@ -72,13 +68,18 @@ public class Program {
                         tokenizer.Tokenize();
 
                         Parser parser = new(tokenizer.tokens);
-                        List<Statement> result = parser.Parse();
+                        List<Statement> statements = parser.Parse();
                         if (parser.hadError) {
                             System.Environment.Exit(65);
                         }
 
-                        Evaluator evaluator = new(environment);
-                        evaluator.Run(result);
+                        Evaluator evaluator = new();
+
+                        Resolver resolver = new(evaluator);
+                        resolver.Resolve(statements);
+
+                        evaluator.Run(statements);
+
 
                         break;
                     }
@@ -88,8 +89,7 @@ public class Program {
                     break;
             }
 
-        }
-        else {
+        } else {
             Console.WriteLine("EOF  null");
             System.Environment.Exit(0);
         }

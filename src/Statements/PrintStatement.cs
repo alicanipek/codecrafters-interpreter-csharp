@@ -9,8 +9,8 @@ public class PrintStatement : Statement {
 		return $"(print {Expression})";
 	}
 
-	public override void Execute(Environment environment) {
-		object value = Expression.Evaluate(environment);
+	public override void Execute(Evaluator evaluator) {
+		object value = Expression.Evaluate(evaluator);
 		if (value == null) {
 			Console.WriteLine("nil");
 		}

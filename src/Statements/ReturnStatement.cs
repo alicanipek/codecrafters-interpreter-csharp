@@ -1,17 +1,17 @@
 public class ReturnStatement : Statement {
-	private Token keyword;
-	private Expr? value;
+    public Token Keyword { get; }
+    public Expr? Value { get; }
 
-	public ReturnStatement(Token keyword, Expr? value) {
-		this.keyword = keyword;
-		this.value = value;
-	}
+    public ReturnStatement(Token keyword, Expr? value) {
+        Keyword = keyword;
+        Value = value;
+    }
 
-	public override void Execute(Environment environment) {
-		object returnValue = null;
-		if (value != null) {
-			returnValue = value.Evaluate(environment);
-		}
-		throw new ReturnException(returnValue);
-	}
+    public override void Execute(Evaluator evaluator) {
+        object returnValue = null;
+        if (Value != null) {
+            returnValue = Value.Evaluate(evaluator);
+        }
+        throw new ReturnException(returnValue);
+    }
 }

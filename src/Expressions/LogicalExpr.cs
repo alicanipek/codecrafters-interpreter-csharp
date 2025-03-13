@@ -9,14 +9,14 @@ public class LogicalExpr : Expr {
 		Right = right;
 	}
 
-    public override object Evaluate(Environment environment) {
-        object left = Left.Evaluate(environment);
+    public override object Evaluate(Evaluator evaluator) {
+        object left = Left.Evaluate(evaluator);
 		if(Operator.TokenType == TokenType.OR) {
 			if(Utils.IsTruthy(left)) return left;
 		}
 		else {
 			if(!Utils.IsTruthy(left)) return left;
 		}
-		return Right.Evaluate(environment);
+		return Right.Evaluate(evaluator);
     }
 }

@@ -1,31 +1,35 @@
 
 public class Function : Callable {
-    private readonly FunctionStatement declaration;
-    private readonly Environment closure;
+    private FunctionStatement _declaration;
+    private Environment _closure;
+
+
     public Function(FunctionStatement declaration, Environment closure) {
-        this.declaration = declaration;
-        this.closure = closure;
-    }
-    public int Arity() {
-        return declaration.Parameters.Count;
+        _declaration = declaration;
+        _closure = closure;
     }
 
-    public override String ToString() {
-        return "<fn " + declaration.Name.Lexeme + ">";
-    }
+    public int Arity => _declaration.Parameters.Count;
 
-    public object Call(Environment environment, List<object> arguments) {
-        Environment functionEnvironment = new Environment(closure);
-        for (int i = 0; i < declaration.Parameters.Count; i++) {
-            functionEnvironment.Define(declaration.Parameters[i].Lexeme, arguments[i]);
+    public object Call(Evaluator evaluator, List<object> arguments) {
+        var env = new Environment(_closure);
+        for (int i = 0; i < _declaration.Parameters.Count; i++) {
+            env.Define(_declaration.Parameters[i].Lexeme, arguments[i]);
         }
         try {
-            BlockStatement blockStatement = new BlockStatement(declaration.Body);
-            blockStatement.Execute(functionEnvironment);
+            var block = new BlockStatement(_declaration.Body);
+            block.EvaluateBlock(evaluator, block.Statements, env);
+            // evaluator.EvaluateBlock(_declaration.Body, env);
         }
-        catch (ReturnException returnValue) {
-            return returnValue.returnValue;
+        catch (ReturnException ret) {
+            return ret.returnValue;
         }
         return null;
+    }
+
+
+
+    public override string ToString() {
+        return "<fn " + _declaration.Name.Lexeme + ">";
     }
 }

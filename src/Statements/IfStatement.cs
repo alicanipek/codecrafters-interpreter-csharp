@@ -13,13 +13,13 @@ public class IfStatement : Statement {
 		return $"(if {Condition} {ThenBranch} {ElseBranch})";
 	}
 
-	public override void Execute(Environment environment) {
-		object value = Condition.Evaluate(environment);
+	public override void Execute(Evaluator evaluator) {
+		object value = Condition.Evaluate(evaluator);
 		if (Utils.IsTruthy(value)) {
-			ThenBranch.Execute(environment);
+			ThenBranch.Execute(evaluator);
 		}
 		else {
-			ElseBranch?.Execute(environment);
+			ElseBranch?.Execute(evaluator);
 		}
 	}
 }

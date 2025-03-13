@@ -9,7 +9,7 @@ public class ExpressionStatement : Statement {
 		return Expression.ToString();
 	}
 
-	public override void Execute(Environment environment) {
-		Expression.Evaluate(environment);
+	public override void Execute(Evaluator evaluator) {
+		Expression.Evaluate(evaluator);
 	}
 }

@@ -1,15 +1,15 @@
 public class WhileStatement : Statement {
-	private Expr condition;
-	private Statement body;
+    public Expr Condition { get; }
+    public Statement Body { get; }
 
-	public WhileStatement(Expr condition, Statement body) {
-		this.condition = condition;
-		this.body = body;
-	}
+    public WhileStatement(Expr condition, Statement body) {
+        Condition = condition;
+        Body = body;
+    }
 
-	public override void Execute(Environment environment) {
-		while (Utils.IsTruthy(condition.Evaluate(environment))) {
-			body.Execute(environment);
-		}
-	}
+    public override void Execute(Evaluator evaluator) {
+        while (Utils.IsTruthy(Condition.Evaluate(evaluator))) {
+            Body.Execute(evaluator);
+        }
+    }
 }

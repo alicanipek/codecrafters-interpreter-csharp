@@ -1,4 +1,4 @@
 public interface Callable {
-    int Arity();
-    object Call(Environment environment, List<object> arguments);
+    object Call(Evaluator evaluator, List<object> arguments);
+    int Arity { get; }
 }
