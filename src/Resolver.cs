@@ -10,8 +10,15 @@ public class Resolver {
     private FunctionType currentFunction = FunctionType.NONE;
 
     public void Resolve(List<Statement> statements) {
-        foreach (var statement in statements) {
-            ResolveStatement(statement);
+        try {
+
+            foreach (var statement in statements) {
+                ResolveStatement(statement);
+            }
+        }
+        catch (RuntimeError error) {
+            Console.Error.WriteLine($"[line {error.token.Line}] Error at '{error.token.Lexeme}': {error.Message}");
+            System.Environment.Exit(65);
         }
     }
 
