@@ -34,6 +34,7 @@ public class Parser {
 
 	private Statement Declaration() {
 		try {
+            if (Match(TokenType.CLASS)) return ClassDeclaration();
 			if (Match(TokenType.FUN)) return FunctionDeclaration("function");
 			if (Match(TokenType.VAR)) return VarDeclaration();
 			return Statement();
@@ -43,7 +44,19 @@ public class Parser {
 			return null; // Return null in case of error
 		}
 	}
+    
+    private Statement ClassDeclaration() {
+        Token name = Consume(TokenType.IDENTIFIER, "Expect class name.");
+        Consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
+        List<FunctionStatement> methods = new();
+        while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd()) {
+            methods.Add((FunctionStatement)FunctionDeclaration("method"));
+        }
+        Consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
+        return new ClassStatement(name, methods);
+
+    }
 	private Statement FunctionDeclaration(string kind) {
 		Token name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
 		Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");

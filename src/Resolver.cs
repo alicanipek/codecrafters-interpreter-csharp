@@ -29,6 +29,10 @@ public class Resolver {
                 Resolve(block.Statements);
                 EndScope();
                 break;
+            case ClassStatement cls:
+                Declare(cls.Name);
+                Define(cls.Name);
+                break;
             case VarStatement var:
                 Declare(var.Name);
                 if (var.Initializer != null) {
