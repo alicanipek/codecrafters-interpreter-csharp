@@ -107,6 +107,13 @@ public class Resolver {
             case UnaryExpr unary:
                 ResolveExpression(unary.Right);
                 break;
+            case GetExpr get:
+                ResolveExpression(get.Object);
+                break;
+            case SetExpr set:
+                ResolveExpression(set.Value);
+                ResolveExpression(set.Object);
+                break;
             case VarExpr variable:
                 if (scopes.Count != 0) {
                     if (scopes[scopes.Count - 1].TryGetValue(variable.Name.Lexeme, out bool value) && value == false) {
