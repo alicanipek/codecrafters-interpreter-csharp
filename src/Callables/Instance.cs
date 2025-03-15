@@ -10,9 +10,12 @@ public class Instance {
     }
 
     public object Get(Token name) {
-        if(_fields.ContainsKey(name.Lexeme)) {
-            return _fields[name.Lexeme];
+        if(_fields.TryGetValue(name.Lexeme, out object? value)) {
+            return value;
         }
+        Function method = _cls.FindMethod(name.Lexeme);
+        if(method != null) return method;
+
         throw new RuntimeError(name, $"Undefined property '{name.Lexeme}'.");
     }
 

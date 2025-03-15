@@ -12,7 +12,12 @@ public class ClassStatement : Statement {
 
     public override void Execute(Evaluator evaluator) {
         evaluator._environment.Define(Name.Lexeme, null);
-        Cls cls = new Cls(Name.Lexeme);
+        Dictionary<string, Function> methods = new();
+        foreach (var method in Methods) {
+            var function = new Function(method, evaluator._environment);
+            methods[method.Name.Lexeme] = function;
+        }
+        Cls cls = new Cls(Name.Lexeme, methods);
         evaluator._environment.Assign(Name, cls);
     }
 }

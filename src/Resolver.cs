@@ -32,6 +32,10 @@ public class Resolver {
             case ClassStatement cls:
                 Declare(cls.Name);
                 Define(cls.Name);
+                foreach (var method in cls.Methods) {
+                    FunctionType declaration = FunctionType.METHOD;
+                    ResolveFunction(method, declaration);
+                }
                 break;
             case VarStatement var:
                 Declare(var.Name);
