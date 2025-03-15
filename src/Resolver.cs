@@ -32,10 +32,13 @@ public class Resolver {
             case ClassStatement cls:
                 Declare(cls.Name);
                 Define(cls.Name);
+                BeginScope();
+                scopes[scopes.Count - 1]["this"] = true;
                 foreach (var method in cls.Methods) {
                     FunctionType declaration = FunctionType.METHOD;
                     ResolveFunction(method, declaration);
                 }
+                EndScope();
                 break;
             case VarStatement var:
                 Declare(var.Name);
@@ -117,6 +120,9 @@ public class Resolver {
             case SetExpr set:
                 ResolveExpression(set.Value);
                 ResolveExpression(set.Object);
+                break;
+            case ThisExpr t:
+                ResolveLocal(t, t.Keyword);
                 break;
             case VarExpr variable:
                 if (scopes.Count != 0) {

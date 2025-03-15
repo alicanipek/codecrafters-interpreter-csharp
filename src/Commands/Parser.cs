@@ -333,6 +333,10 @@ public class Parser {
             return new LiteralExpr(Previous().Literal);
         }
 
+        if (Match(TokenType.THIS)){
+            return new ThisExpr(Previous());
+        }
+
         if (Match(TokenType.IDENTIFIER)) {
             return new VarExpr(Previous());
         }
