@@ -8,7 +8,7 @@ public class Resolver {
 
     private readonly List<Dictionary<string, bool>> scopes = new();
     private FunctionType currentFunction = FunctionType.NONE;
-
+    private ClassType currentClass = ClassType.NONE;
     public void Resolve(List<Statement> statements) {
         try {
 
@@ -30,6 +30,8 @@ public class Resolver {
                 EndScope();
                 break;
             case ClassStatement cls:
+                ClassType enclosingClass = currentClass;
+                currentClass = ClassType.CLASS;
                 Declare(cls.Name);
                 Define(cls.Name);
                 BeginScope();
@@ -39,6 +41,7 @@ public class Resolver {
                     ResolveFunction(method, declaration);
                 }
                 EndScope();
+                currentClass = enclosingClass;
                 break;
             case VarStatement var:
                 Declare(var.Name);
@@ -122,6 +125,9 @@ public class Resolver {
                 ResolveExpression(set.Object);
                 break;
             case ThisExpr t:
+                if (currentClass == ClassType.NONE) {
+                    throw new RuntimeError(t.Keyword, "Cannot use 'this' outside of a class.");
+                }
                 ResolveLocal(t, t.Keyword);
                 break;
             case VarExpr variable:
@@ -191,4 +197,9 @@ public enum FunctionType {
     FUNCTION,
     INITIALIZER,
     METHOD
+}
+
+public enum ClassType {
+    NONE,
+    CLASS
 }
