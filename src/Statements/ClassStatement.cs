@@ -14,7 +14,7 @@ public class ClassStatement : Statement {
         evaluator._environment.Define(Name.Lexeme, null);
         Dictionary<string, Function> methods = new();
         foreach (var method in Methods) {
-            var function = new Function(method, evaluator._environment);
+            var function = new Function(method, evaluator._environment, method.Name.Lexeme.Equals("init"));
             methods[method.Name.Lexeme] = function;
         }
         Cls cls = new Cls(Name.Lexeme, methods);

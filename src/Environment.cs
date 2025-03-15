@@ -46,8 +46,8 @@ public class Environment {
         return environment;
     }
 
-    public object GetAt(int distance, Token name) {
-        return Ancestor(distance).Get(name);
+    public object GetAt(int distance, string name) {
+        return Ancestor(distance).values[name];
     }
 
     public void AssignAt(int distance, Token name, object value) {

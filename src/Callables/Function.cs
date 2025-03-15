@@ -3,13 +3,14 @@ public class Function : Callable {
     private FunctionStatement _declaration;
     private Environment _closure;
 
-
-    public Function(FunctionStatement declaration, Environment closure) {
+    private bool _isInitializer;
+    public Function(FunctionStatement declaration, Environment closure, bool isInitializer = false) {
         _declaration = declaration;
         _closure = closure;
+        _isInitializer = isInitializer;
     }
 
-    public int Arity => _declaration.Parameters.Count;
+    public int Arity() => _declaration.Parameters.Count;
 
     public object Call(Evaluator evaluator, List<object> arguments) {
         var env = new Environment(_closure);
@@ -22,15 +23,17 @@ public class Function : Callable {
             // evaluator.EvaluateBlock(_declaration.Body, env);
         }
         catch (ReturnException ret) {
+            if(_isInitializer) return _closure.GetAt(0, "this");
             return ret.returnValue;
         }
+        if(_isInitializer) return _closure.GetAt(0, "this");
         return null;
     }
 
     public Function Bind(Instance instance) {
         var env = new Environment(_closure);
         env.Define("this", instance);
-        return new Function(_declaration, env);
+        return new Function(_declaration, env, _isInitializer);
     }
 
 

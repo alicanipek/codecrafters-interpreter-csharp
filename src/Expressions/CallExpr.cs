@@ -24,8 +24,8 @@ internal class CallExpr : Expr {
         }
 
         Callable function = value as Callable;
-        if (args.Count != function.Arity) {
-            throw new RuntimeError(Paren, $"Expected {function.Arity} arguments but got {args.Count}.");
+        if (args.Count != function.Arity()) {
+            throw new RuntimeError(Paren, $"Expected {function.Arity()} arguments but got {args.Count}.");
         }
 
         return function.Call(evaluator, args);

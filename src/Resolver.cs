@@ -38,6 +38,9 @@ public class Resolver {
                 scopes[scopes.Count - 1]["this"] = true;
                 foreach (var method in cls.Methods) {
                     FunctionType declaration = FunctionType.METHOD;
+                    if (method.Name.Lexeme.Equals("init")) {
+                        declaration = FunctionType.INITIALIZER;
+                    }
                     ResolveFunction(method, declaration);
                 }
                 EndScope();

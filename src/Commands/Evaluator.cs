@@ -17,7 +17,7 @@ public class Evaluator {
     public object LookupVariable(Token name, Expr expr) {
         bool res = _locals.TryGetValue(expr, out int distance);
         if (res) {
-            return _environment.GetAt(distance, name);
+            return _environment.GetAt(distance, name.Lexeme);
         }
 
         return Globals.Get(name);

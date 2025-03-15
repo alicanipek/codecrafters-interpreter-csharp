@@ -7,10 +7,18 @@ public class Cls : Callable {
         Methods = methods;
     }
 
-    public int Arity => 0;
+    public int Arity() {
+        Function initializer = FindMethod("init");
+        if (initializer == null) return 0;
+        return initializer.Arity();
+    }
 
     public object Call(Evaluator evaluator, List<object> arguments) {
         var instance = new Instance(this);
+        Function? initializer = FindMethod("init");
+        if (initializer != null) {
+            initializer.Bind(instance).Call(evaluator, arguments);
+        }
         return instance;
     }
 
