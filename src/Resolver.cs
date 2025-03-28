@@ -40,6 +40,7 @@ public class Resolver {
                 }
 
                 if (cls.Superclass != null) {
+                    currentClass = ClassType.SUBCLASS;
                     ResolveExpression(cls.Superclass);
                 }
 
@@ -145,6 +146,11 @@ public class Resolver {
                 ResolveExpression(set.Object);
                 break;
             case SuperExpr super:
+                if(currentClass == ClassType.NONE){
+                    throw new RuntimeError(super.Keyword, "Can't use 'super' outside of a class.");
+                }else if (currentClass != ClassType.SUBCLASS) {
+                    throw new RuntimeError(super.Keyword, "Can't use 'super' in a class with no superclass.");
+                }
                 ResolveLocal(super, super.Keyword);
                 break;
             case ThisExpr t:
@@ -224,5 +230,6 @@ public enum FunctionType {
 
 public enum ClassType {
     NONE,
-    CLASS
+    CLASS,
+    SUBCLASS
 }
