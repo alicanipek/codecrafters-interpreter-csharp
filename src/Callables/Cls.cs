@@ -1,9 +1,11 @@
 
 public class Cls : Callable {
     public string Name;
+    public Cls? Superclass;
     public Dictionary<string, Function> Methods;
-    public Cls(string name, Dictionary<string, Function> methods) {
+    public Cls(string name, Cls? superclass, Dictionary<string, Function> methods) {
         Name = name;
+        Superclass = superclass;
         Methods = methods;
     }
 
@@ -26,6 +28,11 @@ public class Cls : Callable {
         if (Methods.TryGetValue(name, out Function? value)) {
             return value;
         }
+
+        if (Superclass != null) {
+            return Superclass.FindMethod(name);
+        }
+
         return null;
     }
 

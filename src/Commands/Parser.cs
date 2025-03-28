@@ -47,6 +47,13 @@ public class Parser {
 
     private Statement ClassDeclaration() {
         Token name = Consume(TokenType.IDENTIFIER, "Expect class name.");
+
+        VarExpr? superclass = null;
+        if(Match(TokenType.LESS)){
+            Consume(TokenType.IDENTIFIER, "Expected superclass name.");
+            superclass = new VarExpr(Previous());
+        }
+
         Consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
         List<FunctionStatement> methods = new();
@@ -54,7 +61,7 @@ public class Parser {
             methods.Add((FunctionStatement)FunctionDeclaration("method"));
         }
         Consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
-        return new ClassStatement(name, methods);
+        return new ClassStatement(name, superclass, methods);
 
     }
     private Statement FunctionDeclaration(string kind) {

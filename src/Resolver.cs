@@ -34,6 +34,15 @@ public class Resolver {
                 currentClass = ClassType.CLASS;
                 Declare(cls.Name);
                 Define(cls.Name);
+
+                if (cls.Superclass != null && cls.Name.Lexeme.Equals(cls.Superclass.Name.Lexeme)) {
+                    throw new RuntimeError(cls.Superclass.Name, "A class can't inherit from itself.");
+                }
+
+                if (cls.Superclass != null) {
+                    ResolveExpression(cls.Superclass);
+                }
+
                 BeginScope();
                 scopes[scopes.Count - 1]["this"] = true;
                 foreach (var method in cls.Methods) {
