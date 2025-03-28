@@ -21,12 +21,21 @@ public class ClassStatement : Statement {
             }
         }
         evaluator._environment.Define(Name.Lexeme, null);
+
+        if (Superclass != null) {
+            evaluator._environment = new Environment(evaluator._environment);
+            evaluator._environment.Define("super", superclass);
+        }
+
         Dictionary<string, Function> methods = new();
         foreach (var method in Methods) {
             var function = new Function(method, evaluator._environment, method.Name.Lexeme.Equals("init"));
             methods[method.Name.Lexeme] = function;
         }
         Cls cls = new Cls(Name.Lexeme, (Cls)superclass, methods);
+        if(superclass != null) {
+            evaluator._environment = evaluator._environment.Enclosing;
+        }
         evaluator._environment.Assign(Name, cls);
     }
 }

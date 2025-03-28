@@ -1,19 +1,19 @@
 public class Environment {
-    private readonly Environment enclosing;
+    public readonly Environment Enclosing;
     private readonly Dictionary<string, object> values = new();
     public Environment() {
-        enclosing = null;
+        Enclosing = null;
     }
     public Environment(Environment enclosing) {
-        this.enclosing = enclosing;
+        this.Enclosing = enclosing;
     }
     public object Get(Token name) {
         if (values.TryGetValue(name.Lexeme, out object? value)) {
             return value;
         }
 
-        if (enclosing != null) {
-            return enclosing.Get(name);
+        if (Enclosing != null) {
+            return Enclosing.Get(name);
         }
 
         throw new RuntimeError(name, $"Undefined variable {name.Lexeme}. {name.Line}");
@@ -25,8 +25,8 @@ public class Environment {
             return;
         }
 
-        if (enclosing != null) {
-            enclosing.Assign(name, value);
+        if (Enclosing != null) {
+            Enclosing.Assign(name, value);
             return;
         }
 
@@ -40,7 +40,7 @@ public class Environment {
     public Environment Ancestor(int distance) {
         Environment environment = this;
         for (int i = 0; i < distance; i++) {
-            environment = environment.enclosing;
+            environment = environment.Enclosing;
         }
 
         return environment;
@@ -56,8 +56,8 @@ public class Environment {
 
     public override string ToString() {
         String result = values.ToString();
-        if (enclosing != null) {
-            result += " -> " + enclosing.ToString();
+        if (Enclosing != null) {
+            result += " -> " + Enclosing.ToString();
         }
 
         return result;

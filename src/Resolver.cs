@@ -43,6 +43,11 @@ public class Resolver {
                     ResolveExpression(cls.Superclass);
                 }
 
+                if(cls.Superclass != null) {
+                    BeginScope();
+                    scopes[scopes.Count - 1]["super"] = true;
+                }
+
                 BeginScope();
                 scopes[scopes.Count - 1]["this"] = true;
                 foreach (var method in cls.Methods) {
@@ -53,6 +58,9 @@ public class Resolver {
                     ResolveFunction(method, declaration);
                 }
                 EndScope();
+                if (cls.Superclass != null) {
+                    EndScope();
+                }
                 currentClass = enclosingClass;
                 break;
             case VarStatement var:
@@ -135,6 +143,9 @@ public class Resolver {
             case SetExpr set:
                 ResolveExpression(set.Value);
                 ResolveExpression(set.Object);
+                break;
+            case SuperExpr super:
+                ResolveLocal(super, super.Keyword);
                 break;
             case ThisExpr t:
                 if (currentClass == ClassType.NONE) {

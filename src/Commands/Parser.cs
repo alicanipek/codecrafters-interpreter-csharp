@@ -49,7 +49,7 @@ public class Parser {
         Token name = Consume(TokenType.IDENTIFIER, "Expect class name.");
 
         VarExpr? superclass = null;
-        if(Match(TokenType.LESS)){
+        if (Match(TokenType.LESS)) {
             Consume(TokenType.IDENTIFIER, "Expected superclass name.");
             superclass = new VarExpr(Previous());
         }
@@ -207,7 +207,7 @@ public class Parser {
             if (expr is VarExpr varExpr) {
                 Token name = varExpr.Name;
                 return new AssignExpr(name, value);
-            } else if(expr is GetExpr get) {
+            } else if (expr is GetExpr get) {
                 return new SetExpr(get.Object, get.Name, value);
             }
 
@@ -340,7 +340,14 @@ public class Parser {
             return new LiteralExpr(Previous().Literal);
         }
 
-        if (Match(TokenType.THIS)){
+        if (Match(TokenType.SUPER)) {
+            Token keyword = Previous();
+            Consume(TokenType.DOT, "Expected '.' after 'super'.");
+            Token method = Consume(TokenType.IDENTIFIER, "Expected superclass method name.");
+            return new SuperExpr(keyword, method);
+        }
+
+        if (Match(TokenType.THIS)) {
             return new ThisExpr(Previous());
         }
 
